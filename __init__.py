@@ -1,12 +1,19 @@
 #!/usr/bin/env python
 import curses
 import os
-from file_manager import Panel
+from file_manager import Panel, File
 
+
+def create_files_list(path):
+    return [
+        File(name, is_dir=os.path.isdir(os.path.join(path, name)))
+        for name
+        in sorted(os.listdir(path))
+    ]
 
 def main(stdscr):
     path = "/"
-    files = sorted(os.listdir(path))
+    files = create_files_list(path)
 
     # get terminal size
     height, width = stdscr.getmaxyx()
@@ -49,15 +56,15 @@ def main(stdscr):
 
         if key == ord("o"):
             selected = files[panel_left.item_picker.selected_idx]
-            new_path = os.path.join(path, selected)
+            new_path = os.path.join(path, selected.name)
             if os.path.isdir(new_path):
                 path = new_path
-                files = sorted(os.listdir(path))
+                files = create_files_list(path)
                 panel_left = Panel(sub, height, width, files, path)
 
         if key == ord("p"):
             path = os.path.abspath(os.path.join(path, os.pardir))
-            files = sorted(os.listdir(path))
+            files = create_files_list(path)
             panel_left = Panel(sub, height, width, files, path)
 
         if key == curses.KEY_DOWN:

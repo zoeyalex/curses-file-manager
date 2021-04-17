@@ -3,31 +3,22 @@ import os
 
 
 class Panel:
-    def __init__(self, subwindow, height, width, items, name):
+    def __init__(self, subwindow, height, width, files, title):
         self.subwindow = subwindow
         self.height = height
         self.width = width
-        self.items = items
-        self.name = name
-        self.item_picker = ItemPicker(len(items), height - 2)
+        self.files = files
+        self.title = title
+        self.item_picker = ItemPicker(len(files), height - 2)
 
     def render(self):
         self.subwindow.box()
-        self.subwindow.addstr(0, 2, self.name)
+        self.subwindow.addstr(0, 2, self.title)
         selected_line = self.item_picker.selected_idx - self.item_picker.current_top
-        for idx, item in enumerate(self.items[self.item_picker.current_top:], 0):
+        for idx, file in enumerate(self.files[self.item_picker.current_top:]):
             if idx >= self.height - 2:
                 break
-            if os.path.isdir(os.path.join(self.name, self.items[idx])):
-                self.subwindow.attron(curses.color_pair(2))
-                self.subwindow.addstr(idx+1, 1, item)
-                self.subwindow.attroff(curses.color_pair(2))
-            else:
-                self.subwindow.addstr(idx+1, 1, item)
-            if idx == selected_line:
-                self.subwindow.attron(curses.color_pair(1))
-                self.subwindow.addstr(idx+1, 1, item)
-                self.subwindow.attroff(curses.color_pair(1))
+            file.render(self.subwindow, idx+1, 1, idx == selected_line)
 
     def handle_resize(self, height, width):
         self.item_picker.handle_resize(height - 2)
@@ -39,6 +30,26 @@ class Panel:
 
     def scroll_down(self):
         self.item_picker.scroll_down()
+
+
+class File:
+    def __init__(self, name, is_dir):
+        self.name = name
+        self.is_dir = is_dir
+
+    def render(self, window, y, x, highlight):
+        if highlight:
+            window.attron(curses.color_pair(1))
+            window.addstr(y, x, self.name)
+            window.attroff(curses.color_pair(1))
+        elif self.is_dir:
+            window.attron(curses.color_pair(2))
+            window.addstr(y, x, self.name)
+            window.attroff(curses.color_pair(2))
+        else:
+            window.addstr(y, x, self.name)
+
+
 
 
 class ItemPicker:
