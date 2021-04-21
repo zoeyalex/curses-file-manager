@@ -61,6 +61,10 @@ def main(stdscr):
                 path = new_path
                 files = create_files_list(path)
                 panel_left = Panel(sub, height, width, files, path)
+            else:
+                with open(new_path, "r") as f:
+                    f = [File(name, False) for name in f]
+                    panel_right = Panel(sub2, height, width, f, os.path.basename(os.path.normpath(new_path)))
 
         if key == ord("p"):
             path = os.path.abspath(os.path.join(path, os.pardir))
@@ -79,11 +83,11 @@ def main(stdscr):
 
             # move window inside parent y, x
             sub.mvderwin(0, 0)
-            sub2.mvderwin(0, width//2)
+            sub2.mvderwin(0, width//3)
 
             # nlines ncols
-            sub.resize(height, width//2)
-            sub2.resize(height, width//2)
+            sub.resize(height, width//3)
+            sub2.resize(height, 2*width//3)
 
             panel_left.handle_resize(height, width)
             panel_right.handle_resize(height, width)
