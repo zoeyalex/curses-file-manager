@@ -62,19 +62,24 @@ def main(stdscr):
                 files = create_files_list(path)
                 panel_left = Panel(sub, height, width, files, path)
             else:
-                with open(new_path, "r") as f:
-                    f = [File(name, False) for name in f]
-                    panel_right = Panel(sub2, height, width, f, os.path.basename(os.path.normpath(new_path)))
+                try:
+
+                    with open(new_path, "r") as f:
+                        f = [File(name, False) for name in f]
+                        panel_right = Panel(sub2, height, width, f, os.path.basename(os.path.normpath(new_path)))
+                except:
+                    panel_right = Panel(sub2, height, width, [], "selected file is not a text file")
+
 
         if key == ord("p"):
             path = os.path.abspath(os.path.join(path, os.pardir))
             files = create_files_list(path)
             panel_left = Panel(sub, height, width, files, path)
 
-        if key == curses.KEY_DOWN:
+        if key == ord("j"):
             panel_left.scroll_down()
 
-        if key == curses.KEY_UP:
+        if key == ord("k"):
             panel_left.scroll_up()
 
         # handle resize
