@@ -19,8 +19,8 @@ def main(stdscr):
     height, width = stdscr.getmaxyx()
 
     # create subwindows nlines, ncols, begin_y, begin_x
-    sub = stdscr.subwin(0, width//2, 0, 0)
-    sub2 = stdscr.subwin(0, width//2)
+    sub = stdscr.subwin(0, width//3, 0, 0)
+    sub2 = stdscr.subwin(0, 2*width//3, 0, width//3)
 
     # disable cursor blink
     curses.curs_set(0)
