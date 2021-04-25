@@ -12,6 +12,7 @@ def create_files_list(path):
     ]
 
 def main(stdscr):
+    # starting path
     path = "/"
     files = create_files_list(path)
 
@@ -29,7 +30,7 @@ def main(stdscr):
     curses.start_color()
     curses.use_default_colors()
     # highlight
-    curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_YELLOW)
+    curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
     # dir
     curses.init_pair(2, 3, 0)
 
@@ -95,7 +96,6 @@ def main(stdscr):
 
             panel_left.handle_resize(height, width)
             panel_right.handle_resize(height, width)
-
 
 if __name__ == "__main__":
     # handle window
