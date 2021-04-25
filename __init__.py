@@ -38,6 +38,8 @@ def main(stdscr):
     panel_left = Panel(sub, height, width, files, path)
     panel_right = Panel(sub2, height, width, [], "preview:")
 
+    current_panel = 1
+
     while True:
         stdscr.erase()
 
@@ -76,11 +78,23 @@ def main(stdscr):
             files = create_files_list(path)
             panel_left = Panel(sub, height, width, files, path)
 
-        if key == ord("j"):
-            panel_left.scroll_down()
+        if key == ord("l") and current_panel != 2:
+            current_panel = 2
 
-        if key == ord("k"):
+        if key == ord("h") and current_panel != 1:
+            current_panel = 1
+            panel_right = Panel(sub2, height,width, [], "")
+
+        # unoptimized
+        if key == ord("j") and current_panel == 1:
+            panel_left.scroll_down()
+        elif key == ord("j") and current_panel == 2:
+            panel_right.scroll_down()
+
+        if key == ord("k") and current_panel == 1:
             panel_left.scroll_up()
+        elif key == ord("k") and current_panel == 2:
+            panel_right.scroll_up()
 
         # handle resize
         if key == curses.KEY_RESIZE:
