@@ -72,7 +72,6 @@ def main(stdscr):
                 except:
                     panel_right = Panel(sub2, height, width, [], "selected file is not a text file")
 
-
         if key == ord("p") and current_panel == 1:
             path = os.path.abspath(os.path.join(path, os.pardir))
             files = create_files_list(path)
