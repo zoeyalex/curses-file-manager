@@ -56,7 +56,7 @@ def main(stdscr):
         if key == ord("q"):
             break
 
-        if key == ord("o"):
+        if key == ord("o") and current_panel == 1:
             selected = files[panel_left.item_picker.selected_idx]
             new_path = os.path.join(path, selected.name)
             if os.path.isdir(new_path):
@@ -73,7 +73,7 @@ def main(stdscr):
                     panel_right = Panel(sub2, height, width, [], "selected file is not a text file")
 
 
-        if key == ord("p"):
+        if key == ord("p") and current_panel == 1:
             path = os.path.abspath(os.path.join(path, os.pardir))
             files = create_files_list(path)
             panel_left = Panel(sub, height, width, files, path)
