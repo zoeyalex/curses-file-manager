@@ -1,3 +1,4 @@
+![alt txt](https://github.com/zoeyalex/curses-file-manager/blob/master/img/tux.png)
 # curses file manager
 A terminal-based file manager/viewer with vim-like keybindings for unix-like and unix-based systems.
 
