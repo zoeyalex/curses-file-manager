@@ -1,5 +1,6 @@
 ![alt txt](https://github.com/zoeyalex/curses-file-manager/blob/master/img/tux.png)
 
+[![Created Badge](https://badges.pufler.dev/created/zoeyalex/curses-file-manager)](https://badges.pufler.dev)
 [![Updated Badge](https://badges.pufler.dev/updated/zoeyalex/curses-file-manager)](https://badges.pufler.dev)
 [![Commits Badge](https://badges.pufler.dev/commits/monthly/zoeyalex)](https://badges.pufler.dev)
 # curses file manager
