@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import curses
 import os
-from file_manager import Panel, File
+from gui import Panel, File
 
 
 def create_files_list(path):
