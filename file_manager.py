@@ -50,8 +50,6 @@ class File:
             window.addstr(y, x, self.name)
 
 
-
-
 class ItemPicker:
     def __init__(self, count, size):
         self.count = count
