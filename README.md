@@ -1,5 +1,5 @@
 # curses file manager
-a terminal-based file manager/viewer with vim-like keybindings for unix-like and unix-based systems
+A terminal-based file manager/viewer with vim-like keybindings for unix-like and unix-based systems.
 
 Navigation
 -----
