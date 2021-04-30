@@ -38,14 +38,40 @@ class File:
         self.is_dir = is_dir
 
     def render(self, window, y, x, highlight):
-        if highlight:
+        if highlight and self.is_dir:
+            window.attron(curses.color_pair(1))
+            window.attron(curses.A_BOLD)
+            window.addstr(y, x, self.name)
+            window.attroff(curses.color_pair(1))
+            window.attroff(curses.A_BOLD)
+        elif highlight and self.name[0] == ".":
+            window.attron(curses.color_pair(1))
+            window.attron(curses.A_ITALIC)
+            window.addstr(y, x, self.name)
+            window.attroff(curses.color_pair(1))
+            window.attroff(curses.A_ITALIC)
+        elif highlight:
             window.attron(curses.color_pair(1))
             window.addstr(y, x, self.name)
             window.attroff(curses.color_pair(1))
+        elif self.name[0] == "." and self.is_dir:
+            window.attron(curses.A_DIM)
+            window.attron(curses.A_BOLD)
+            window.addstr(y, x, self.name)
+            window.attroff(curses.A_DIM)
+            window.attroff(curses.A_BOLD)
+        elif self.name[0] == ".":
+            window.attron(curses.A_ITALIC)
+            window.attron(curses.A_DIM)
+            window.addstr(y, x, self.name)
+            window.attroff(curses.A_DIM)
+            window.attroff(curses.A_ITALIC)
         elif self.is_dir:
             window.attron(curses.color_pair(2))
+            window.attron(curses.A_BOLD)
             window.addstr(y, x, self.name)
             window.attroff(curses.color_pair(2))
+            window.attroff(curses.A_BOLD)
         else:
             window.addstr(y, x, self.name)
 
