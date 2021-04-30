@@ -17,4 +17,4 @@ Navigation
 
 Preview
 -----
-![alt txt](https://github.com/zoeyalex/curses-file-manager/blob/master/img/Screenshot_2021-04-21_19-39-36.png)
+![alt txt](https://github.com/zoeyalex/curses-file-manager/blob/master/img/Screenshot_2021-04-30_02-12-56.png)
