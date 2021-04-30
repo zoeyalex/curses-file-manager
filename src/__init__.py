@@ -32,7 +32,9 @@ def main(stdscr):
     # highlight
     curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
     # dir
-    curses.init_pair(2, 3, 0)
+    curses.init_pair(2, 11, 0)
+    # highligh dir
+    curses.init_pair(3, curses.COLOR_BLACK, 11)
 
     # create a panel object
     panel_left = Panel(sub, height, width, files, path)
