@@ -1,5 +1,4 @@
 import curses
-import os
 
 
 class Panel:
@@ -18,7 +17,7 @@ class Panel:
         for idx, file in enumerate(self.files[self.item_picker.current_top:]):
             if idx >= self.height - 2:
                 break
-            file.render(self.subwindow, idx+1, 1, idx == selected_line)
+            file.render(self.subwindow, idx + 1, 1, idx == selected_line)
 
     def handle_resize(self, height, width):
         self.item_picker.handle_resize(height - 2)

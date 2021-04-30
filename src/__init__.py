@@ -11,6 +11,7 @@ def create_files_list(path):
         in sorted(os.listdir(path))
     ]
 
+
 def main(stdscr):
     # starting path
     path = "/"
@@ -20,8 +21,8 @@ def main(stdscr):
     height, width = stdscr.getmaxyx()
 
     # create subwindows nlines, ncols, begin_y, begin_x
-    sub = stdscr.subwin(0, width//3, 0, 0)
-    sub2 = stdscr.subwin(0, 2*width//3, 0, width//3)
+    sub = stdscr.subwin(0, width // 3, 0, 0)
+    sub2 = stdscr.subwin(0, 2 * width // 3, 0, width // 3)
 
     # disable cursor blink
     curses.curs_set(0)
@@ -33,8 +34,6 @@ def main(stdscr):
     curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
     # dir
     curses.init_pair(2, 11, 0)
-    # highligh dir
-    curses.init_pair(3, curses.COLOR_BLACK, 11)
 
     # create a panel object
     panel_left = Panel(sub, height, width, files, path)
@@ -67,11 +66,10 @@ def main(stdscr):
                 panel_left = Panel(sub, height, width, files, path)
             else:
                 try:
-
                     with open(new_path, "r") as f:
-                        f = [File(name, False) for name in f]
+                        f = [File(name.rstrip(), False) for name in f]
                         panel_right = Panel(sub2, height, width, f, os.path.basename(os.path.normpath(new_path)))
-                except:
+                except UnicodeDecodeError:
                     panel_right = Panel(sub2, height, width, [], "selected file is not a text file")
 
         if key == ord("p") and current_panel == 1:
@@ -84,7 +82,7 @@ def main(stdscr):
 
         if key == ord("h") and current_panel != 1:
             current_panel = 1
-            panel_right = Panel(sub2, height,width, [], "")
+            panel_right = Panel(sub2, height, width, [], "")
 
         # unoptimized
         if key == ord("j") and current_panel == 1:
@@ -103,14 +101,15 @@ def main(stdscr):
 
             # move window inside parent y, x
             sub.mvderwin(0, 0)
-            sub2.mvderwin(0, width//3)
+            sub2.mvderwin(0, width // 3)
 
             # nlines ncols
-            sub.resize(height, width//3)
-            sub2.resize(height, 2*width//3)
+            sub.resize(height, width // 3)
+            sub2.resize(height, 2 * width // 3)
 
             panel_left.handle_resize(height, width)
             panel_right.handle_resize(height, width)
+
 
 if __name__ == "__main__":
     # handle window
