@@ -3,7 +3,7 @@
 ![alt txt](https://img.shields.io/github/last-commit/zoeyalex/curses-file-manager/master)
 ![alt txt](https://img.shields.io/github/repo-size/zoeyalex/curses-file-manager)
 # curses file manager
-A terminal-based file manager/viewer with vim-like keybindings for unix-like and unix-based systems.
+A terminal-based file manager/viewer with vim-like keybindings for \*nix and unix-based systems.
 
 Navigation
 -----
