@@ -13,7 +13,7 @@ def create_files_list(path):
 
 
 def main(stdscr):
-    # starting path
+    # set starting path and create a list of sorted File objects containing current directory's filenames
     path = "/"
     files = create_files_list(path)
 
@@ -30,15 +30,21 @@ def main(stdscr):
     # create a color pair FG/BG
     curses.start_color()
     curses.use_default_colors()
+
     # highlight
-    curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
-    # dir
-    curses.init_pair(2, 11, 0)
+    curses.init_pair(1, curses.COLOR_BLACK, 11)
+
+    # directory
+    curses.init_pair(2, 5, 0)
+
+    # border
+    curses.init_pair(3, 6, 0)
 
     # create a panel object
     panel_left = Panel(sub, height, width, files, path)
     panel_right = Panel(sub2, height, width, [], "preview:")
 
+    # starting panel
     current_panel = 1
 
     while True:
@@ -57,13 +63,15 @@ def main(stdscr):
         if key == ord("q"):
             break
 
+        # go inside a directory
         if key == ord("o") and current_panel == 1:
-            selected = files[panel_left.item_picker.selected_idx]
+            selected = files[panel_left.file_picker.selected_idx]
             new_path = os.path.join(path, selected.name)
             if os.path.isdir(new_path):
                 path = new_path
                 files = create_files_list(path)
                 panel_left = Panel(sub, height, width, files, path)
+            # preview a text file
             else:
                 try:
                     with open(new_path, "r") as f:
@@ -72,14 +80,17 @@ def main(stdscr):
                 except UnicodeDecodeError:
                     panel_right = Panel(sub2, height, width, [], "selected file is not a text file")
 
+        # go up a directory
         if key == ord("p") and current_panel == 1:
             path = os.path.abspath(os.path.join(path, os.pardir))
             files = create_files_list(path)
             panel_left = Panel(sub, height, width, files, path)
 
+        # move one panel right
         if key == ord("l") and current_panel != 2:
             current_panel = 2
 
+        # move one panel left
         if key == ord("h") and current_panel != 1:
             current_panel = 1
             panel_right = Panel(sub2, height, width, [], "")
@@ -99,11 +110,11 @@ def main(stdscr):
         if key == curses.KEY_RESIZE:
             height, width = stdscr.getmaxyx()
 
-            # move window inside parent y, x
+            # set windows' left upper corner y, x
             sub.mvderwin(0, 0)
             sub2.mvderwin(0, width // 3)
 
-            # nlines ncols
+            # set windows' right lower corner y, x
             sub.resize(height, width // 3)
             sub2.resize(height, 2 * width // 3)
 
