@@ -1,7 +1,7 @@
 ![alt txt](https://github.com/zoeyalex/curses-file-manager/blob/master/img/tux.png)
 
 ![alt txt](https://img.shields.io/github/last-commit/zoeyalex/curses-file-manager/master)
-![alt txt](https://img.shields.io/github/repo-size/zoeyalex/curses-file-manager)
+![alt txt](https://img.shields.io/github/languages/code-size/zoeyalex/curses-file-manager)
 # curses file manager
 A TUI file manager/viewer with vim-like keybindings for \*nix and unix-based systems.
 
