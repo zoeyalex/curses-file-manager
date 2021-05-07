@@ -8,27 +8,29 @@ class Panel:
         self.width = width
         self.files = files
         self.title = title
-        self.item_picker = ItemPicker(len(files), height - 2)
+        self.file_picker = FilePicker(len(files), height - 2)
 
     def render(self):
+        self.subwindow.attron(curses.color_pair(3))
         self.subwindow.box()
+        self.subwindow.attroff(curses.color_pair(3))
         self.subwindow.addstr(0, 2, self.title)
-        selected_line = self.item_picker.selected_idx - self.item_picker.current_top
-        for idx, file in enumerate(self.files[self.item_picker.current_top:]):
+        selected_line = self.file_picker.selected_idx - self.file_picker.current_top
+        for idx, file in enumerate(self.files[self.file_picker.current_top:]):
             if idx >= self.height - 2:
                 break
             file.render(self.subwindow, idx + 1, 1, idx == selected_line)
 
     def handle_resize(self, height, width):
-        self.item_picker.handle_resize(height - 2)
+        self.file_picker.handle_resize(height - 2)
         self.height = height
         self.width = width
 
     def scroll_up(self):
-        self.item_picker.scroll_up()
+        self.file_picker.scroll_up()
 
     def scroll_down(self):
-        self.item_picker.scroll_down()
+        self.file_picker.scroll_down()
 
 
 class File:
@@ -43,28 +45,10 @@ class File:
             window.addstr(y, x, self.name)
             window.attroff(curses.color_pair(1))
             window.attroff(curses.A_BOLD)
-        elif highlight and self.name[0] == ".":
-            window.attron(curses.color_pair(1))
-            window.attron(curses.A_ITALIC)
-            window.addstr(y, x, self.name)
-            window.attroff(curses.color_pair(1))
-            window.attroff(curses.A_ITALIC)
         elif highlight:
             window.attron(curses.color_pair(1))
             window.addstr(y, x, self.name)
             window.attroff(curses.color_pair(1))
-        elif self.name[0] == "." and self.is_dir:
-            window.attron(curses.A_DIM)
-            window.attron(curses.A_BOLD)
-            window.addstr(y, x, self.name)
-            window.attroff(curses.A_DIM)
-            window.attroff(curses.A_BOLD)
-        elif self.name[0] == ".":
-            window.attron(curses.A_ITALIC)
-            window.attron(curses.A_DIM)
-            window.addstr(y, x, self.name)
-            window.attroff(curses.A_DIM)
-            window.attroff(curses.A_ITALIC)
         elif self.is_dir:
             window.attron(curses.color_pair(2))
             window.attron(curses.A_BOLD)
@@ -75,7 +59,7 @@ class File:
             window.addstr(y, x, self.name)
 
 
-class ItemPicker:
+class FilePicker:
     def __init__(self, count, size):
         self.count = count
         self.selected_idx = 0
