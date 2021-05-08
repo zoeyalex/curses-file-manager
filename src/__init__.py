@@ -2,6 +2,7 @@
 import curses
 import os
 from gui import Panel, File
+from os.path import expanduser
 
 
 def create_files_list(path):
@@ -14,15 +15,15 @@ def create_files_list(path):
 
 def main(stdscr):
     # set starting path and create a list of sorted File objects containing current directory's filenames
-    path = "/"
+    path = expanduser("~")
     files = create_files_list(path)
 
     # get terminal size
     height, width = stdscr.getmaxyx()
 
     # create subwindows nlines, ncols, begin_y, begin_x
-    sub = stdscr.subwin(0, width // 3, 0, 0)
-    sub2 = stdscr.subwin(0, 2 * width // 3, 0, width // 3)
+    sub = stdscr.subwin(0, width // 5, 0, 0)
+    sub2 = stdscr.subwin(0, 4 * width // 5, 0, width // 5)
 
     # disable cursor blink
     curses.curs_set(0)
@@ -50,8 +51,8 @@ def main(stdscr):
     while True:
         stdscr.erase()
 
-        panel_left.render()
-        panel_right.render()
+        panel_left.render_filesystem()
+        panel_right.render_file()
 
         # update display
         curses.doupdate()
@@ -95,16 +96,15 @@ def main(stdscr):
             current_panel = 1
             panel_right = Panel(sub2, height, width, [], "")
 
-        # unoptimized
         if key == ord("j") and current_panel == 1:
             panel_left.scroll_down()
         elif key == ord("j") and current_panel == 2:
-            panel_right.scroll_down()
+            panel_right.scroll_file_down()
 
         if key == ord("k") and current_panel == 1:
             panel_left.scroll_up()
         elif key == ord("k") and current_panel == 2:
-            panel_right.scroll_up()
+            panel_right.scroll_file_up()
 
         # handle resize
         if key == curses.KEY_RESIZE:
@@ -112,14 +112,14 @@ def main(stdscr):
 
             # set windows' left upper corner y, x
             sub.mvderwin(0, 0)
-            sub2.mvderwin(0, width // 3)
+            sub2.mvderwin(0, width // 5)
 
             # set windows' right lower corner y, x
-            sub.resize(height, width // 3)
-            sub2.resize(height, 2 * width // 3)
+            sub.resize(height, width // 5)
+            sub2.resize(height, 4 * width // 5)
 
             panel_left.handle_resize(height, width)
-            panel_right.handle_resize(height, width)
+            panel_right.handle_resize_file(height, width)
 
 
 if __name__ == "__main__":
