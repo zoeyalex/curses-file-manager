@@ -9,8 +9,9 @@ class Panel:
         self.files = files
         self.title = title
         self.file_picker = FilePicker(len(files), height - 2)
+        self.file_scroller = FileScroller(len(files), height - 2)
 
-    def render(self):
+    def render_filesystem(self):
         self.subwindow.attron(curses.color_pair(3))
         self.subwindow.box()
         self.subwindow.attroff(curses.color_pair(3))
@@ -19,10 +20,27 @@ class Panel:
         for idx, file in enumerate(self.files[self.file_picker.current_top:]):
             if idx >= self.height - 2:
                 break
-            file.render(self.subwindow, idx + 1, 1, idx == selected_line)
+            if self.width > 50:
+                file.render(self.subwindow, idx + 1, 1, idx == selected_line)
+
+    def render_file(self):
+        self.subwindow.attron(curses.color_pair(3))
+        self.subwindow.box()
+        self.subwindow.attroff(curses.color_pair(3))
+        self.subwindow.addstr(0, 2, self.title)
+        for line, file in enumerate(self.files[self.file_scroller.current_top:]):
+            if line >= self.height - 2:
+                break
+            if self.width > 50:
+                file.render(self.subwindow, line + 1, 1, 0)
 
     def handle_resize(self, height, width):
         self.file_picker.handle_resize(height - 2)
+        self.height = height
+        self.width = width
+
+    def handle_resize_file(self, height, width):
+        self.file_scroller.handle_resize(height -2)
         self.height = height
         self.width = width
 
@@ -31,6 +49,12 @@ class Panel:
 
     def scroll_down(self):
         self.file_picker.scroll_down()
+
+    def scroll_file_up(self):
+        self.file_scroller.scroll_up()
+
+    def scroll_file_down(self):
+        self.file_scroller.scroll_down()
 
 
 class File:
@@ -90,4 +114,33 @@ class FilePicker:
         else:
             if (self.selected_idx - self.current_top) >= new_size:
                 self.current_top += self.selected_idx - self.current_top - new_size + 1
+        self.size = new_size
+
+
+class FileScroller:
+    def __init__(self, count, size):
+        self.count = count
+        self.size = size
+        self.current_top = 0
+
+    def scroll_up(self):
+        if self.current_top > 0:
+            self.current_top -= 1
+
+    def scroll_down(self):
+        if self.current_top < self.count - self.size:
+            self.current_top += 1
+
+    def handle_resize(self, new_size):
+        if self.size == new_size:
+            return
+        if new_size > self.size:
+            if self.current_top != 0:
+                self.current_top = max(
+                    self.current_top - (new_size - self.size),
+                    0
+                )
+        else:
+            if (self.count - self.current_top) >= new_size:
+                self.current_top += self.count - self.current_top - new_size + 1
         self.size = new_size
