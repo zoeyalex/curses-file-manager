@@ -3,6 +3,7 @@ import curses
 import os
 from gui import Panel, File
 from os.path import expanduser
+from curses.textpad import Textbox, rectangle
 
 
 def create_files_list(path):
@@ -105,6 +106,24 @@ def main(stdscr):
             panel_left.scroll_up()
         elif key == ord("k") and current_panel == 2:
             panel_right.scroll_file_up()
+
+        if key == ord("/"):
+            stdscr.addstr(height-1, 1, "(press ^G to send your search query)")
+
+            editwin = curses.newwin(1, width // 5 - 4, height - 3, 2)
+            rectangle(stdscr, height - 4, 1, height - 2, width // 5 - 2)
+            stdscr.refresh()
+            box = Textbox(editwin)
+
+            # let the user edit until ^G is struck
+            box.edit()
+
+            # get resulting contents
+            message = str(box.gather()).rstrip()
+
+            # remove all files that do not satisfy the search query
+            files = [File(file, False) for file in sorted(os.listdir(path)) if message in file]
+            panel_left = Panel(sub, height, width, files, path)
 
         # handle resize
         if key == curses.KEY_RESIZE:
