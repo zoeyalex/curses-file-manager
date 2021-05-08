@@ -14,6 +14,8 @@ Navigation
 * `l`: switch panel right
 * `k`: move up
 * `j`: move down
+* `/`: enter search mode
+* `Return`: send search query
 
 Preview
 -----
