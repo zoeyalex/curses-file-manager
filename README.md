@@ -9,7 +9,7 @@ Navigation
 -----
 * `q`: quit
 * `o`: cd inside a directory or open a text file on the adjacent panel
-* `p`: go back a directory, basically `cd ..`
+* `p`: go back a directory `cd ..`
 * `h`: switch panel left
 * `l`: switch panel right
 * `k`: move up
