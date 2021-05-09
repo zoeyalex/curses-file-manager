@@ -122,7 +122,12 @@ def main(stdscr):
             message = str(box.gather()).rstrip()
 
             # remove all files that do not satisfy the search query
-            files = [File(file, False) for file in sorted(os.listdir(path)) if message in file]
+            files = [
+                File(file, False)
+                for file
+                in sorted(os.listdir(path))
+                if message in file
+            ]
             panel_left = Panel(sub, height, width, files, path)
 
         # handle resize
