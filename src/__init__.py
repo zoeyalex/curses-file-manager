@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 import curses
 import os
-from gui import Panel, File
+from gui import BrowserPanel, PreviewPanel, File
 from os.path import expanduser
 from curses.textpad import Textbox, rectangle
+
+
+MIN_WIDTH = 15
 
 
 def create_files_list(path):
@@ -43,8 +46,8 @@ def main(stdscr):
     curses.init_pair(3, 6, 0)
 
     # create a panel object
-    panel_left = Panel(sub, height, width, files, path)
-    panel_right = Panel(sub2, height, width, [], "preview:")
+    panel_left = BrowserPanel(sub, height, width // 5, files, path)
+    panel_right = PreviewPanel(sub2, height, 4 * width // 5, None)
 
     # starting panel
     current_panel = 1
@@ -52,8 +55,9 @@ def main(stdscr):
     while True:
         stdscr.erase()
 
-        panel_left.render_filesystem()
-        panel_right.render_file()
+        if width >= MIN_WIDTH:
+            panel_left.render()
+            panel_right.render()
 
         # update display
         curses.doupdate()
@@ -72,21 +76,16 @@ def main(stdscr):
             if os.path.isdir(new_path):
                 path = new_path
                 files = create_files_list(path)
-                panel_left = Panel(sub, height, width, files, path)
+                panel_left = BrowserPanel(sub, height, width // 5, files, path)
             # preview a text file
             else:
-                try:
-                    with open(new_path, "r") as f:
-                        f = [File(name.rstrip(), False) for name in f]
-                        panel_right = Panel(sub2, height, width, f, os.path.basename(os.path.normpath(new_path)))
-                except UnicodeDecodeError:
-                    panel_right = Panel(sub2, height, width, [], "selected file is not a text file")
+                panel_right = PreviewPanel(sub2, height, 4 * width // 5, new_path)
 
         # go up a directory
         if key == ord("p") and current_panel == 1:
             path = os.path.abspath(os.path.join(path, os.pardir))
             files = create_files_list(path)
-            panel_left = Panel(sub, height, width, files, path)
+            panel_left = BrowserPanel(sub, height, width // 5, files, path)
 
         # move one panel right
         if key == ord("l") and current_panel != 2:
@@ -95,17 +94,17 @@ def main(stdscr):
         # move one panel left
         if key == ord("h") and current_panel != 1:
             current_panel = 1
-            panel_right = Panel(sub2, height, width, [], "")
+            panel_right = PreviewPanel(sub2, height, 4 * width // 5, None)
 
         if key == ord("j") and current_panel == 1:
             panel_left.scroll_down()
         elif key == ord("j") and current_panel == 2:
-            panel_right.scroll_file_down()
+            panel_right.scroll_down()
 
         if key == ord("k") and current_panel == 1:
             panel_left.scroll_up()
         elif key == ord("k") and current_panel == 2:
-            panel_right.scroll_file_up()
+            panel_right.scroll_up()
 
         if key == ord("/"):
             stdscr.addstr(height - 1, 1, "(press Return to send your search query)")
@@ -128,22 +127,23 @@ def main(stdscr):
                 in sorted(os.listdir(path))
                 if message in file
             ]
-            panel_left = Panel(sub, height, width, files, path)
+            panel_left = BrowserPanel(sub, height, width // 5, files, path)
 
         # handle resize
         if key == curses.KEY_RESIZE:
             height, width = stdscr.getmaxyx()
 
-            # set windows' left upper corner y, x
-            sub.mvderwin(0, 0)
-            sub2.mvderwin(0, width // 5)
+            if width >= MIN_WIDTH:
+                # set windows' left upper corner y, x
+                sub.mvderwin(0, 0)
+                sub2.mvderwin(0, width // 5)
 
-            # set windows' right lower corner y, x
-            sub.resize(height, width // 5)
-            sub2.resize(height, 4 * width // 5)
+                # set windows' right lower corner y, x
+                sub.resize(height, width // 5)
+                sub2.resize(height, 4 * width // 5)
 
-            panel_left.handle_resize(height, width)
-            panel_right.handle_resize_file(height, width)
+            panel_left.handle_resize(height, width // 5)
+            panel_right.handle_resize(height, 4 * width // 5)
 
 
 if __name__ == "__main__":
