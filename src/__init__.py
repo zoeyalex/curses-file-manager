@@ -108,7 +108,7 @@ def main(stdscr):
             panel_right.scroll_file_up()
 
         if key == ord("/"):
-            stdscr.addstr(height-1, 1, "(press Return to send your search query)")
+            stdscr.addstr(height - 1, 1, "(press Return to send your search query)")
 
             editwin = curses.newwin(1, width // 5 - 4, height - 3, 2)
             rectangle(stdscr, height - 4, 1, height - 2, width // 5 - 2)
