@@ -134,9 +134,13 @@ def main(stdscr):
             height, width = stdscr.getmaxyx()
 
             if width >= MIN_WIDTH:
+
                 # set windows' left upper corner y, x
-                sub.mvderwin(0, 0)
-                sub2.mvderwin(0, width // 5)
+                try:
+                    sub.mvderwin(0, 0)
+                    sub2.mvderwin(0, width // 5)
+                except curses.error:
+                    pass
 
                 # set windows' right lower corner y, x
                 sub.resize(height, width // 5)
