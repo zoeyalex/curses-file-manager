@@ -50,7 +50,7 @@ def main(stdscr):
     panel_right = PreviewPanel(sub2, height, 4 * width // 5, None)
 
     # starting panel
-    current_panel = 1
+    active_panel = panel_left
 
     while True:
         stdscr.erase()
@@ -70,7 +70,7 @@ def main(stdscr):
             break
 
         # go inside a directory
-        if key == ord("o") and current_panel == 1:
+        if key == ord("o") and active_panel is panel_left:
             selected = files[panel_left.file_picker.selected_idx]
             new_path = os.path.join(path, selected.name)
             if os.path.isdir(new_path):
@@ -82,29 +82,25 @@ def main(stdscr):
                 panel_right = PreviewPanel(sub2, height, 4 * width // 5, new_path)
 
         # go up a directory
-        if key == ord("p") and current_panel == 1:
+        if key == ord("p") and active_panel is panel_left:
             path = os.path.abspath(os.path.join(path, os.pardir))
             files = create_files_list(path)
             panel_left = BrowserPanel(sub, height, width // 5, files, path)
 
         # move one panel right
-        if key == ord("l") and current_panel != 2:
-            current_panel = 2
+        if key == ord("l"):
+            active_panel = panel_right
 
         # move one panel left
-        if key == ord("h") and current_panel != 1:
-            current_panel = 1
+        if key == ord("h"):
+            active_panel = panel_left
             panel_right = PreviewPanel(sub2, height, 4 * width // 5, None)
 
-        if key == ord("j") and current_panel == 1:
-            panel_left.scroll_down()
-        elif key == ord("j") and current_panel == 2:
-            panel_right.scroll_down()
+        if key == ord("j"):
+            active_panel.scroll_down()
 
-        if key == ord("k") and current_panel == 1:
-            panel_left.scroll_up()
-        elif key == ord("k") and current_panel == 2:
-            panel_right.scroll_up()
+        if key == ord("k"):
+            active_panel.scroll_up()
 
         if key == ord("/"):
             stdscr.addstr(height - 1, 1, "(press Return to send your search query)")
