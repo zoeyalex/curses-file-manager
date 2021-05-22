@@ -1,12 +1,11 @@
 import curses
 import os
-from file import File, FilePicker, FileScroller
+from file import File, FilePicker, FileScroller, create_files_list
 
 class BasePanel:
-    def __init__(self, subwindow, height, width, title):
+    def __init__(self, subwindow, title):
+        self.height, self.width = subwindow.getmaxyx()
         self.subwindow = subwindow
-        self.height = height
-        self.width = width
         self.title = title
 
     def render(self):
@@ -25,17 +24,25 @@ class BasePanel:
     def scroll_down(self):
         pass
 
+    def handle_key(self, key):
+        return self.KEYBINDS[key](self)
 
-class DebugPanel(BasePanel):
-    def __init__(self, subwindow):
-        width, height = subwindow.getmaxyx()
-        super().__init__(subwindow, height, width, "siema")
+    KEYBINDS = {}
+
 
 class BrowserPanel(BasePanel):
-    def __init__(self, subwindow, height, width, files, title):
-        super().__init__(subwindow, height, width, title)
-        self.files = files
-        self.file_picker = FilePicker(len(files), height - 2)
+    def __init__(self, subwindow, path):
+        super().__init__(subwindow, path)
+        self.path = None
+        self.files = None
+        self.file_picker = None
+        self.update_path(path)
+
+    def update_path(self, new_path):
+        self.path = new_path
+        self.files = create_files_list(self.path)
+        self.file_picker = FilePicker(len(self.files), self.height - 2)
+        self.title = self.path
 
     def render(self):
         super().render()
@@ -55,9 +62,25 @@ class BrowserPanel(BasePanel):
     def scroll_down(self):
         self.file_picker.scroll_down()
 
+    def go_up_dir(self):
+        self.update_path(os.path.abspath(os.path.join(self.path, os.pardir)))
+
+    def go_into_dir(self):
+        selected = self.files[self.file_picker.selected_idx]
+        new_path = os.path.join(self.path, selected.name)
+        if selected.is_dir:
+            self.update_path(new_path)
+        else:
+            return "open_preview", new_path
+
+    KEYBINDS = {
+        ord("p"): go_up_dir,
+        ord("o"): go_into_dir,
+    }
+
 
 class PreviewPanel(BasePanel):
-    def __init__(self, subwindow, height, width, path):
+    def __init__(self, subwindow, path):
         if path is None:
             self.lines = []
             title = "preview: "
@@ -70,9 +93,9 @@ class PreviewPanel(BasePanel):
                 self.lines = []
                 title = "selected file is not a text file"
 
-        super().__init__(subwindow, height, width, title)
+        super().__init__(subwindow, title)
 
-        self.file_scroller = FileScroller(len(self.lines), height - 2)
+        self.file_scroller = FileScroller(len(self.lines), self.height - 2)
 
     def render(self):
         super().render()

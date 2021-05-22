@@ -5,7 +5,7 @@ import os
 from os.path import expanduser
 
 # local imports
-from gui import BrowserPanel, PreviewPanel, DebugPanel
+from panels import BrowserPanel, PreviewPanel
 from file import File
 from keybinds import *
 
@@ -38,43 +38,40 @@ def calculate_dimensions(stdscr):
     ]
 
 
-
-
-
 def application(stdscr):
     init()
 
-    sub, sub2 = [stdscr.subwin(*dim) for dim in calculate_dimensions(stdscr)]
-   # panels = [BrowserPanel(sub, "~"), PreviewPanel(sub2, None)]
+    height, width = stdscr.getmaxyx()
 
-    panels = [DebugPanel(sub), DebugPanel(sub2)]
+    sub, sub2 = [stdscr.subwin(*dim) for dim in calculate_dimensions(stdscr)]
+
+    state = {
+        "screen": stdscr,
+        "panels": [BrowserPanel(sub, expanduser("~")), PreviewPanel(sub2, None)],
+        "active_panel": 0,
+    }
+
 
     while True:
+
+        stdscr.erase()
+
+        if width >= MIN_WIDTH:
+            for panel in state["panels"]:
+                panel.render()
+
+        curses.doupdate()
+
         # get user input (stored as ASCII integer) and refresh screen
         key = stdscr.getch()
 
-        stdscr.erase()
-        if KEYBINDS.get(key, default)(stdscr):
+        if KEYBINDS.get(key, default)(key, state):
             break
-
-        for panel in panels:
-            panel.render()
-
-        stdscr.addstr(3, 3, chr(key))
 
 
 class ApplicationOld:
 
-    def __init__(self):
-        self.height, self.width = None, None
-        self.path = expanduser("~")
 
-    def create_files_list(self, path):
-        return [
-            File(name, is_dir=os.path.isdir(os.path.join(self.path, name)))
-            for name
-            in sorted(os.listdir(self.path))
-        ]
 
     def run(self, stdscr):
         self.height, self.width = stdscr.getmaxyx()

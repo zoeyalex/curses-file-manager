@@ -1,4 +1,5 @@
 import curses
+import os
 
 
 class File:
@@ -88,3 +89,11 @@ class FileScroller:
             if (self.count - self.current_top) >= new_size:
                 self.current_top += self.count - self.current_top - new_size + 1
         self.size = new_size
+
+
+def create_files_list( path):
+    return [
+        File(name, is_dir=os.path.isdir(os.path.join(path, name)))
+        for name
+        in sorted(os.listdir(path))
+    ]
