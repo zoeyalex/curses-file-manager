@@ -3,29 +3,35 @@ import os
 
 
 class File:
-    def __init__(self, name, is_dir ):
+    def __init__(self, name, is_dir):
         self.name = name
         self.is_dir = is_dir
+        self.perms = self.get_perms()
+
+
+    def get_perms(self):
+        perms = [(char if perm else "-") for char, perm in zip("rwx", [os.access(self.name, os.R_OK), os.access(self.name, os.W_OK), os.access(self.name, os.X_OK)])]
+        return "".join(perms)
 
     def render(self, window, y, x, highlight, max_width):
         if highlight and self.is_dir:
             window.attron(curses.color_pair(1))
             window.attron(curses.A_BOLD)
-            window.addnstr(y, x, self.name, max_width)
+            window.addnstr(y, x, self.name + " " + self.perms, max_width)
             window.attroff(curses.color_pair(1))
             window.attroff(curses.A_BOLD)
         elif highlight:
             window.attron(curses.color_pair(1))
-            window.addnstr(y, x, self.name, max_width)
+            window.addnstr(y, x, self.name + " " + self.perms, max_width)
             window.attroff(curses.color_pair(1))
         elif self.is_dir:
             window.attron(curses.color_pair(2))
             window.attron(curses.A_BOLD)
-            window.addnstr(y, x, self.name, max_width)
+            window.addnstr(y, x, self.name + " " + self.perms, max_width)
             window.attroff(curses.color_pair(2))
             window.attroff(curses.A_BOLD)
         else:
-            window.addnstr(y, x, self.name, max_width)
+            window.addnstr(y, x, self.name + " " + self.perms, max_width)
 
 
 class FilePicker:
@@ -95,5 +101,5 @@ def create_files_list( path):
     return [
         File(name, is_dir=os.path.isdir(os.path.join(path, name)))
         for name
-        in sorted(os.listdir(path))
+        in os.listdir(path)
     ]

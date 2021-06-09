@@ -33,8 +33,8 @@ def init():
 def calculate_dimensions(stdscr):
     height, width = stdscr.getmaxyx()
     return [
-        (0, width // 5, 0, 0),
-        (0, 4 * width // 5, 0, width // 5)
+        (0, 2 * width // 5, 0, 0),
+        (0, 3 * width // 5, 0, 2 * width // 5)
     ]
 
 
@@ -68,7 +68,7 @@ def application(stdscr):
         if KEYBINDS.get(key, default)(key, state):
             break
 
-
+"""
 class ApplicationOld:
 
 
@@ -199,3 +199,4 @@ class ApplicationOld:
 
 def sub(stdscr, nlines, ncols, y, x):
     return stdscr.subwin(nlines, ncols, y, x)
+"""
