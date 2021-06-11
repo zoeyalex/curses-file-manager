@@ -13,25 +13,29 @@ class File:
         perms = [(char if perm else "-") for char, perm in zip("rwx", [os.access(self.name, os.R_OK), os.access(self.name, os.W_OK), os.access(self.name, os.X_OK)])]
         return "".join(perms)
 
-    def render(self, window, y, x, highlight, max_width):
+    def render(self, window, y, x, highlight, max_width, max_height):
         if highlight and self.is_dir:
             window.attron(curses.color_pair(1))
             window.attron(curses.A_BOLD)
-            window.addnstr(y, x, self.name + " " + self.perms, max_width)
+            window.addnstr(y, x, self.name, max_width)
+            window.addnstr(max_height+1, max_width - 2, self.perms, max_width)
             window.attroff(curses.color_pair(1))
             window.attroff(curses.A_BOLD)
         elif highlight:
             window.attron(curses.color_pair(1))
-            window.addnstr(y, x, self.name + " " + self.perms, max_width)
+            window.addnstr(y, x, self.name, max_width)
+            window.addnstr(max_height+1, max_width - 2, self.perms, max_width)
             window.attroff(curses.color_pair(1))
         elif self.is_dir:
             window.attron(curses.color_pair(2))
             window.attron(curses.A_BOLD)
-            window.addnstr(y, x, self.name + " " + self.perms, max_width)
+            window.addnstr(y, x, self.name, max_width)
+            window.addnstr(max_height+1, max_width - 2, self.perms, max_width)
             window.attroff(curses.color_pair(2))
             window.attroff(curses.A_BOLD)
         else:
-            window.addnstr(y, x, self.name + " " + self.perms, max_width)
+            window.addnstr(y, x, self.name, max_width)
+            window.addnstr(max_height+1, max_width - 2, self.perms, max_width)
 
 
 class FilePicker:

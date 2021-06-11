@@ -50,7 +50,7 @@ class BrowserPanel(BasePanel):
         for idx, file in enumerate(self.files[self.file_picker.current_top:]):
             if idx >= self.height - 2:
                 break
-            file.render(self.subwindow, idx + 1, 1, idx == selected_line, max(0, self.width - 2))
+            file.render(self.subwindow, idx + 1, 1, idx == selected_line, max(0, self.width - 2), idx)
 
     def handle_resize(self, height, width):
         super().handle_resize(height, width)
