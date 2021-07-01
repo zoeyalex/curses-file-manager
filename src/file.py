@@ -3,14 +3,15 @@ import os
 
 
 class File:
-    def __init__(self, name, is_dir):
+    def __init__(self, name, path, is_dir):
         self.name = name
         self.is_dir = is_dir
+        self.path = path
         self.perms = self.get_perms()
 
 
     def get_perms(self):
-        perms = [(char if perm else "-") for char, perm in zip("rwx", [os.access(self.name, os.R_OK), os.access(self.name, os.W_OK), os.access(self.name, os.X_OK)])]
+        perms = [(char if perm else "-") for char, perm in zip("rwx", [os.access(self.path, os.R_OK), os.access(self.path, os.W_OK), os.access(self.path, os.X_OK)])]
         return "".join(perms)
 
     def render(self, window, y, x, highlight, max_width, max_height):
@@ -103,7 +104,7 @@ class FileScroller:
 
 def create_files_list( path):
     return [
-        File(name, is_dir=os.path.isdir(os.path.join(path, name)))
+        File(name, path, is_dir=os.path.isdir(os.path.join(path, name)))
         for name
         in os.listdir(path)
     ]
